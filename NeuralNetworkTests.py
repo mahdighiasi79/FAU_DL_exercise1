@@ -9,6 +9,7 @@ import argparse
 
 ID = 1  # identifier for dispatcher
 
+
 class TestFullyConnected1(unittest.TestCase):
     def setUp(self):
         self.batch_size = 9
