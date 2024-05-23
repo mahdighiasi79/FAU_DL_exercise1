@@ -14,5 +14,4 @@ class ReLU(Base.BaseLayer):
 
     @staticmethod
     def backward(error_tensor):
-        relu_derivative = error_tensor > 0
-        return error_tensor * relu_derivative
+        pass
