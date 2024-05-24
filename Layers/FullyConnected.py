@@ -1,23 +1,23 @@
 import numpy as np
-import Base
+# import Base
 
 
-class FullyConnected(Base.BaseLayer):
+class FullyConnected:
 
     def __init__(self, input_size, output_size):
-        super().__init__()
+        # super().__init__()
         self.trainable = True
-        self.weights = np.random.uniform(0, 1, input_size * output_size).reshape((input_size, output_size))
-        self.biases = np.zeros(output_size)
+        self.weights = np.random.uniform(0, 1, (input_size + 1) * output_size).reshape(((input_size + 1), output_size))
         self._optimizer = None
         self._gradient_weights = None
-        self._gradient_biases = None
         self.input_tensor = np.array([])
 
     def forward(self, input_tensor):
         self.input_tensor = input_tensor
-        output_tensor = input_tensor @ self.weights
-        output_tensor += self.biases
+        weights = self.weights[0: len(self.weights) - 1]
+        biases = self.weights[len(self.weights) - 1]
+        output_tensor = input_tensor @ weights
+        output_tensor += biases
         return output_tensor
 
     def get_optimizer(self):
@@ -36,24 +36,14 @@ class FullyConnected(Base.BaseLayer):
 
     gradient_weights = property(get_gradient_weights, set_gradient_weights)
 
-    def get_gradient_biases(self):
-        return self._gradient_biases
-
-    def set_gradient_biases(self, value):
-        self._gradient_biases = value
-
-    gradient_biases = property(get_gradient_biases, set_gradient_biases)
-
     def backward(self, error_tensor):
-        self.gradient_biases = error_tensor
-
+        gradient_biases = np.sum(error_tensor, axis=0, keepdims=True)
         gradient_weights = self.input_tensor.transpose() @ error_tensor
-        self.gradient_weights = gradient_weights
+        self.gradient_weights = np.concatenate((gradient_weights, gradient_biases), axis=0)
 
-        error_tensor = error_tensor @ self.weights.transpose()
+        error_tensor = error_tensor @ self.weights[0: len(self.weights) - 1].transpose()
 
         if self.optimizer is not None:
-            self.optimizer.calculate_update(self.weights, gradient_weights)
-            self.optimizer.calculate_update(self.biases, self.gradient_biases)
+            self.optimizer.calculate_update(self.weights, self.gradient_weights)
 
         return error_tensor

@@ -1,11 +1,12 @@
-import Base
+# import Base
 import numpy as np
 
 
-class SoftMax(Base.BaseLayer):
+class SoftMax:
 
     def __init__(self):
-        super().__init__()
+        # super().__init__()
+        self.trainable = False
         self.output_tensor = np.array([])
 
     def forward(self, input_tensor):

@@ -1,20 +1,23 @@
+import copy
+
 import numpy as np
-import Base
+# import Base
 
 
-class ReLU(Base.BaseLayer):
+class ReLU:
 
     def __init__(self):
-        super().__init__()
+        # super().__init__()
+        self.trainable = False
         self.input_tensor = np.array([])
 
     def forward(self, input_tensor):
         self.input_tensor = input_tensor
-        output_tensor = input_tensor > 0
+        output_tensor = (input_tensor > 0).astype(float)
         output_tensor *= input_tensor
         return output_tensor
 
     def backward(self, error_tensor):
-        relu_derivative = self.input_tensor > 0
+        relu_derivative = (self.input_tensor > 0).astype(float)
         error_tensor *= relu_derivative
         return error_tensor
