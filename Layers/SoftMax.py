@@ -10,13 +10,20 @@ class SoftMax:
         self.output_tensor = np.array([])
 
     def forward(self, input_tensor):
-        exp = np.power(np.e, input_tensor)
-        s = np.sum(exp, keepdims=False)
+        exp = np.exp(input_tensor - np.max(input_tensor))
+        s = np.sum(exp, axis=1, keepdims=True)
         output_tensor = exp / s
         self.output_tensor = output_tensor
         return output_tensor
 
     def backward(self, error_tensor):
-        softmax_derivative = self.output_tensor - np.power(self.output_tensor, 2)
-        error_tensor *= softmax_derivative
+        batch_size, output_size = self.output_tensor.shape
+        derivative_matrix = np.repeat(self.output_tensor[:, :, np.newaxis], output_size, axis=2)
+        transpose_matrix = derivative_matrix.transpose((0, 2, 1))
+        transpose_matrix *= -derivative_matrix
+        identity_matrix = np.identity(output_size)
+        identity_matrix = np.repeat(identity_matrix[np.newaxis, :, :], batch_size, axis=0)
+        derivative_matrix = transpose_matrix + (identity_matrix * derivative_matrix)
+        derivative_matrix = np.sum(derivative_matrix, axis=1, keepdims=False)
+        error_tensor *= derivative_matrix
         return error_tensor
