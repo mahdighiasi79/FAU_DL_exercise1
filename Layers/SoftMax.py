@@ -9,6 +9,7 @@ class SoftMax:
         # super().__init__()
         self.trainable = False
         self.output_tensor = np.array([])
+        self.type = "SoftMax"
 
     def forward(self, input_tensor):
         exp = np.exp(input_tensor - np.max(input_tensor))

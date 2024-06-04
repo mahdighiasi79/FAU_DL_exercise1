@@ -5,6 +5,7 @@ class CrossEntropyLoss:
 
     def __init__(self):
         self.prediction_tensor = np.array([])
+        self.type = "CrossEntropyLoss"
 
     def forward(self, prediction_tensor, label_tensor):
         self.prediction_tensor = prediction_tensor

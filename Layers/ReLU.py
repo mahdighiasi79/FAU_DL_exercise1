@@ -10,6 +10,7 @@ class ReLU:
         # super().__init__()
         self.trainable = False
         self.input_tensor = np.array([])
+        self.type = "ReLU"
 
     def forward(self, input_tensor):
         self.input_tensor = input_tensor

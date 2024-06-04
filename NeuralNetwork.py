@@ -23,21 +23,22 @@ class NeuralNetwork:
 
     def backward(self, label_tensor):
         error_tensor = self.loss_layer.backward(label_tensor)
-        for layer in self.layers:
+        reversed_layers = copy.deepcopy(self.layers)
+        reversed_layers.reverse()
+        for layer in reversed_layers:
             error_tensor = layer.backward(error_tensor)
         return error_tensor
 
     def append_layer(self, layer):
         if layer.trainable:
-            optimizer = copy.deepcopy(self.optimizer)
-            layer.optimizer = optimizer
+            layer.optimizer = copy.deepcopy(self.optimizer)
         self.layers.append(layer)
 
     def train(self, iterations):
         for i in range(iterations):
-            self.forward()
-            error_tensor = self.backward(self.label_tensor)
-            self.loss.append(error_tensor)
+            loss = self.forward()
+            self.backward(self.label_tensor)
+            self.loss.append(loss)
 
     def test(self, input_tensor):
         output_tensor = copy.deepcopy(input_tensor)

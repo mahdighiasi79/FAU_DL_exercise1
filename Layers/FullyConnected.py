@@ -11,6 +11,7 @@ class FullyConnected:
         self._optimizer = None
         self._gradient_weights = None
         self.input_tensor = np.array([])
+        self.type = "FullyConnected"
 
     def forward(self, input_tensor):
         self.input_tensor = input_tensor
