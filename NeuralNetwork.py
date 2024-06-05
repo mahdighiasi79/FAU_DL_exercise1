@@ -14,20 +14,16 @@ class NeuralNetwork:
         self.label_tensor = None
 
     def forward(self):
-        input_tensor, label_tensor = self.data_layer.next()
-        self.label_tensor = copy.deepcopy(label_tensor)
+        input_tensor, self.label_tensor = copy.deepcopy(self.data_layer.next())
         for layer in self.layers:
             input_tensor = layer.forward(input_tensor)
-        output_tensor = self.loss_layer.forward(input_tensor, label_tensor)
-        return output_tensor
+        loss = self.loss_layer.forward(input_tensor, copy.deepcopy(self.label_tensor))
+        return loss
 
-    def backward(self, label_tensor):
-        error_tensor = self.loss_layer.backward(label_tensor)
-        reversed_layers = copy.deepcopy(self.layers)
-        reversed_layers.reverse()
-        for layer in reversed_layers:
+    def backward(self):
+        error_tensor = self.loss_layer.backward(copy.deepcopy(self.label_tensor))
+        for layer in reversed(self.layers):
             error_tensor = layer.backward(error_tensor)
-        return error_tensor
 
     def append_layer(self, layer):
         if layer.trainable:
@@ -37,7 +33,7 @@ class NeuralNetwork:
     def train(self, iterations):
         for i in range(iterations):
             loss = self.forward()
-            self.backward(self.label_tensor)
+            self.backward()
             self.loss.append(loss)
 
     def test(self, input_tensor):
