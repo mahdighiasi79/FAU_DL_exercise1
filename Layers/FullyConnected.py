@@ -1,11 +1,11 @@
 import numpy as np
-# import Base
+from . import Base
 
 
-class FullyConnected:
+class FullyConnected(Base.BaseLayer):
 
     def __init__(self, input_size, output_size):
-        # super().__init__()
+        super().__init__()
         self.trainable = True
         self.weights = np.random.uniform(0, 1, (input_size + 1) * output_size).reshape(((input_size + 1), output_size))
         self._optimizer = None
